@@ -73,7 +73,7 @@ This project is a Next.js application that serves as an AI agent utilizing Langc
     LANGSMITH_API_KEY=your_langsmith_api_key
     LANGSMITH_PROJECT=default
     LANGCHAIN_CALLBACKS_BACKGROUND=false
-```
+   ```
    
 
 ### Running the Application
