@@ -1,0 +1,74 @@
+extend type Query {
+  wikipediaTool: TC_GraphQL
+    @supplies(query: "tc_tools")
+    @materializer(
+      query: "tc_graphql_tool"
+      arguments: [
+        { name: "name", const: "wikipedia" }
+        { name: "description", const: "Retrieve information from Wikipedia." }
+        { name: "fields", const: "search|page" }
+      ]
+    )
+  google_books: TC_GraphQL
+    @supplies(query: "tc_tools")
+    @materializer(
+      query: "tc_graphql_tool"
+      arguments: [
+        { name: "name", const: "google_books" }
+        {
+          name: "description"
+          const: "Retrieve information from Google Books. Find books by search string, for example to search for Daniel Keyes 'Flowers for Algernon' use q: 'intitle:flowers+inauthor:keyes'"
+        }
+        { name: "fields", const: "books|book" }
+      ]
+    )
+  Customers: TC_GraphQL
+    @supplies(query: "tc_tools")
+    @materializer(
+      query: "tc_graphql_tool"
+      arguments: [
+        { name: "name", const: "customers" }
+        {
+          name: "description"
+          const: "Retrieve information for Customers from the API. Returns a list of customers having their address, email, id name and orders.To search for a customer with id: 1, use the curl address followed by /1 e.g. https://api/example.com/customers/1"
+        }
+        { name: "fields", const: "dummyCustomersQuery" }
+      ]
+    )
+  Comments: TC_GraphQL
+    @supplies(query: "tc_tools")
+    @materializer(
+      query: "tc_graphql_tool"
+      arguments: [
+        { name: "name", const: "comments" }
+        {
+          name: "description"
+          const: "Retrieve comments  from a Dummy Json API. Returns a list of comments with information including body, likes, postId and user details(username,fullname)."
+        }
+        { name: "fields", const: "dummyCommentsQuery" }
+      ]
+    )
+  youtube_transcript: TC_GraphQL
+    @supplies(query: "tc_tools")
+    @materializer(
+      query: "tc_graphql_tool"
+      arguments: [
+        { name: "name", const: "youtube_transcript" }
+        {
+          name: "description"
+          const: "Retrieve transcripts for a given YouTube video. The videoUrl should be in the format https://www.youtube.com/watch?v=VIDEO_ID"
+        }
+        { name: "fields", const: "transcript" }
+      ]
+    )
+  weather: TC_GraphQL
+    @supplies(query: "tc_tools")
+    @materializer(
+      query: "tc_graphql_tool"
+      arguments: [
+        { name: "name", const: "weather" }
+        { name: "description", const: "Retrieve detailed weather information." }
+        { name: "fields", const: "weatherByCity" }
+      ]
+    )
+}
