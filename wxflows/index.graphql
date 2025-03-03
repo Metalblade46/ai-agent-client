@@ -7,7 +7,6 @@ schema
       "customers/index.graphql"
       "comments/index.graphql"
       "youtube_transcript/index.graphql"
-      "weather/index.graphql"
     ]
   ) {
   query: Query
