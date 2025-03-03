@@ -9,6 +9,7 @@ type MessageBubbleProps = {
   isUser?: boolean; // true if the message is from the user, false if from the assistant
 };
 const formatMessage = (content: string): string => {
+  console.log(content)
   //First unescape backslashes
   content.replace(/\\\\/g, "\\");
   //Then replace newline characters with <br>
