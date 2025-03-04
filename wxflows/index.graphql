@@ -3,10 +3,11 @@ schema
     files: [
       "wikipedia/index.graphql"
       "tools.graphql"
-      "google_books/index.graphql"
       "customers/index.graphql"
       "comments/index.graphql"
       "youtube_transcript/index.graphql"
+      "google_books/index.graphql"
+      "weather/index.graphql"
     ]
   ) {
   query: Query

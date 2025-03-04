@@ -9,6 +9,9 @@ import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts
 import { AIMessage, BaseMessage, SystemMessage, trimMessages } from '@langchain/core/messages'
 import { StreamEvent } from '@langchain/core/tracers/log_stream'
 import { IterableReadableStream } from '@langchain/core/utils/stream'
+// import { DynamicStructuredTool } from "@langchain/core/tools";
+// import axios from 'axios'
+// import { z } from "zod";
 
 //Customers at : 'https://introspection.pis.stepzen.com/customers'
 // wxflows import curl https://introspection.apis.stepzen.com/customers --name customers --query-name customers --query-type Customers
@@ -21,7 +24,30 @@ const toolClient = new wxflows({
     apikey: process.env.WXFLOWS_APIKEY
 })
 const tools = await toolClient.lcTools
-const toolNode = new ToolNode(tools)
+// const weatherTool = new DynamicStructuredTool ( {
+//     name: "get_weather",
+//     description: "Call to get the current weather.",
+//     schema: z.object({
+//         city: z.string().describe("Location to get the weather for."),
+//     }),
+//     func: async ({city}) => {
+//         try {
+//             const appId = process.env.OPEN_WEATHERMAP_KEY;
+//             console.log(appId)
+//             const geo = await axios.get(`http://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=5&appid=${appId}`)
+//             console.log(geo.data)
+//             const { lat, lon } = geo.data;
+//             const weather = await axios.get(`https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&appid=${appId}`)
+//             console.log(weather.data)
+//             return weather.data.current;
+//         } catch (error) {
+//             console.log("error---",error)
+//         }
+    
+    
+//     }
+// })
+const toolNode = new ToolNode([...tools])
 const trimmer = trimMessages({
     maxTokens: 10,
     strategy: "last",
@@ -77,13 +103,14 @@ const initialiseModel = () => {
     //     contents: cached
     // })
     const model = new ChatGoogleGenerativeAI({
-        model: "gemini-1.5-pro",
+        model: "gemini-1.5-flash",
         // model: "gemini-2.0-flash",
         temperature: 0.7,
         apiKey: process.env.GOOGLE_API_KEY,
         streaming: true,
-        maxRetries: 2,
-        maxOutputTokens: 1000,
+        maxRetries: 6,
+        maxOutputTokens: 2000,
+        // verbose: true,
         callbacks: [
             {
                 handleLLMStart: () => console.log("Starting LLM Call"),
@@ -98,22 +125,23 @@ const initialiseModel = () => {
                 }
             }
         ]
-    }).bindTools(tools);
+    }).bindTools([...tools]);
     // model.useCachedContent(cachedContent);
-    
+
     return model
 }
 
 // Define the function that determines whether to continue or not
 function shouldContinue({ messages }: typeof MessagesAnnotation.State) {
     const lastMessage = messages[messages.length - 1] as AIMessage;
+    console.log("shouldcontinue", lastMessage)
 
     // If the LLM makes a tool call, then we route to the "tools" node
     if (lastMessage.tool_calls?.length) {
         return "tools";
     }
     // If the last message is a tool call, then we continue the conversation to the "agent" node
-    if (lastMessage.content && lastMessage._getType() == "tool")
+    if (lastMessage && lastMessage.getType() == "tool")
         return "agent"
     // Otherwise, we stop (reply to the user) using the special "__end__" node
     return END;
@@ -121,35 +149,35 @@ function shouldContinue({ messages }: typeof MessagesAnnotation.State) {
 const createWorkFlow = () => {
     const model = initialiseModel();
 
-  return new StateGraph(MessagesAnnotation)
-    .addNode("agent", async (state) => {
-      // Create the system message content
-      const systemContent = SYSTEM_MESSAGE;
+    return new StateGraph(MessagesAnnotation)
+        .addNode("agent", async (state) => {
+            // Create the system message content
+            const systemContent = SYSTEM_MESSAGE;
 
-      // Create the prompt template with system message and messages placeholder
-      const promptTemplate = ChatPromptTemplate.fromMessages([
-        new SystemMessage(systemContent, {
-          cache_control: { type: "ephemeral" },
-        }),
-        new MessagesPlaceholder("messages"),
-      ]);
+            // Create the prompt template with system message and messages placeholder
+            const promptTemplate = ChatPromptTemplate.fromMessages([
+                new SystemMessage(systemContent, {
+                    cache_control: { type: "ephemeral" },
+                }),
+                new MessagesPlaceholder("messages"),
+            ]);
 
-      // Trim the messages to manage conversation history
-      const trimmedMessages = await trimmer.invoke(state.messages);
+            // Trim the messages to manage conversation history
+            const trimmedMessages = await trimmer.invoke(state.messages);
 
-      // Format the prompt with the current messages
-      const prompt = await promptTemplate.invoke({ messages: trimmedMessages });
+            // Format the prompt with the current messages
+            const prompt = await promptTemplate.invoke({ messages: trimmedMessages });
 
-      // Get response from the model
-      const response = await model.invoke(prompt);
+            // Get response from the model
+            const response = await model.invoke(prompt);
 
-      return { messages: [response] };
-    })
-    .addNode("tools", toolNode)
-    .addEdge(START, "agent")
-    .addConditionalEdges("agent", shouldContinue)
-    .addEdge("tools", "agent");
-   
+            return { messages: [response] };
+        })
+        .addNode("tools", toolNode)
+        .addEdge(START, "agent")
+        .addConditionalEdges("agent", shouldContinue)
+        .addEdge("tools", "agent");
+
 }
 // const addCachingHeaders = (messages: BaseMessage[]): BaseMessage[] => {
 //     //Rules
