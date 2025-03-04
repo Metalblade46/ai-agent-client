@@ -13,7 +13,7 @@ type MessageBubbleProps = {
 const MessageBubble = ({ content, isUser = false}: MessageBubbleProps) => {
   const { user } = useUser();
   return (
-    <div className={`flex max-w-[90vw] ${isUser ? "justify-end" : "justify-start"}`}>
+    <div className={`flex  ${isUser ? "justify-end" : "justify-start"}`}>
       <div
         className={`rounded-2xl px-4 py-2.5 max-w-[75%]  shadow-sm ring-1 ring-inset relative 
             ${isUser ? "bg-blue-600 text-white rounded-br-none ring-blue-700" : "bg-white text-gray-900 rounded-bl-none ring-gray-700"}`}

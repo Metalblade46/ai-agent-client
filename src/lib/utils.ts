@@ -32,9 +32,9 @@ export function createSSEParser(){
 }
 export const formatMessage = (content: string): string => {
   //First unescape backslashes
-  content.replace(/\\\\/g, "\\");
+  content = content.replace(/\\\\/g, "\\");
   //Then replace newline characters with <br>
-  content.replace(/\\n/g, "");
+  content = content.replace(/\\n/g, '\n')
   //Remove only the markers but keep the content between them
   content = content.replace(/---START---\n?/g, "").replace(/\n?---END---/g, "");
   //Trim extra white spaces

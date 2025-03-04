@@ -5,7 +5,7 @@ import { Button } from "./ui/button";
 import { ArrowRight } from "lucide-react";
 import { ChatRequestBody, StreamMessageType } from "@/lib/types";
 // import axios, { AxiosError } from "axios";
-import { createSSEParser } from "@/lib/utils";
+import { createSSEParser, formatMessage } from "@/lib/utils";
 import { getConvexClient } from "@/lib/convex";
 import { api } from "../../convex/_generated/api";
 import MessageBubble from "./MessageBubble";
@@ -35,6 +35,7 @@ export default function ChatInterface({
   }, [messages, streamedResponse]);
 
   const formatToolOutput = (output: unknown): string => {
+    console.log(output)
     if (typeof output === "string") return output;
     return JSON.stringify(output, null, 2);
   };
@@ -148,6 +149,7 @@ export default function ChatInterface({
               break;
 
             case StreamMessageType.ToolStart:
+              console.log('toolstart',message)
               // Handle start of tool execution (e.g. API calls, file operations)
               if ("tool" in message) {
                 setCurrentTool({
@@ -165,6 +167,7 @@ export default function ChatInterface({
 
             case StreamMessageType.ToolEnd:
               // Handle completion of tool execution
+              console.log('toolEnd',message)
               if ("tool" in message && currentTool) {
                 // Replace the "Processing..." message with actual output
                 const lastTerminalIndex = fullResponse.lastIndexOf(
@@ -210,7 +213,7 @@ export default function ChatInterface({
               })
               await convex.mutation(api.messages.storeMessage, {
                 chatId,
-                content: fullResponse,
+                content: formatMessage(fullResponse),
                 role: "assistant",
               });
 
