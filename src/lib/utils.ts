@@ -30,3 +30,14 @@ export function createSSEParser(){
   }
   return parse
 }
+export const formatMessage = (content: string): string => {
+  //First unescape backslashes
+  content.replace(/\\\\/g, "\\");
+  //Then replace newline characters with <br>
+  content.replace(/\\n/g, "");
+  //Remove only the markers but keep the content between them
+  content = content.replace(/---START---\n?/g, "").replace(/\n?---END---/g, "");
+  //Trim extra white spaces
+  content = content.trim();
+  return content;
+};

@@ -49,10 +49,11 @@ export async function POST(req: Request) {
                     const eventStream = submitQuestion(langchainMessages, chatId)
                     //Process the events
                     for await (const event of await eventStream) {
-                        if (event.event == "on_chain_stream") {
+                        if (event.event == "on_chat_model_stream") {
                             const token = event.data.chunk;
+                            console.log("token---",token)
                             if (token) {
-                                const text = token[0]?.content;
+                                const text = token.content;
                                 if (text)
                                     await sendSSEMessage(writer, {
                                         type: StreamMessageType.Token,

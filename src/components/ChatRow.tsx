@@ -3,7 +3,7 @@ import { Doc, Id } from '../../convex/_generated/dataModel'
 import { usePathname, useRouter } from 'next/navigation'
 import { NavigationContext } from '@/lib/NavigationProvider';
 import { TrashIcon } from '@radix-ui/react-icons';
-import { cn } from '@/lib/utils';
+import { cn, formatMessage } from '@/lib/utils';
 import { useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 
@@ -32,7 +32,7 @@ const ChatRow = ({chat,onDelete}: {chat: Doc<"chats">, onDelete: (id: Id<"chats"
     <div className={cn('group w-full border border-gray-200/30 mx-1 p-3 shadow-lg rounded-lg cursor-pointer',pathName.includes(chat._id)? 'bg-blue-600 text-white': 'bg-white hover:bg-blue-200/50 text-gray-600')} onClick={handleclick}>
         <div className='flex justify-between items-center text-sm'>
             {
-                lastMessage ? `${lastMessage.role=="user"? "You: ": "AI: "} ${lastMessage.content.replace(/\\n/g, "\n").substring(0,25)}...`: <span className="text-gray-400">New conversation</span>
+                lastMessage ? `${lastMessage.role=="user"? "You: ": "AI: "} ${formatMessage(lastMessage.content).substring(0,25)}...`: <span className="text-gray-400">New conversation</span>
             }
         <TrashIcon className='text-transparent group-hover:text-red-400 hover:scale-150 transition-all ease-in duration-200 cursor-pointer' onClick={handleDelete}/>
         </div>

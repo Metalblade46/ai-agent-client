@@ -3,23 +3,13 @@
 import { useUser } from "@clerk/nextjs";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { BotIcon } from "lucide-react";
+import { formatMessage } from "@/lib/utils";
 
 type MessageBubbleProps = {
   content: string;
   isUser?: boolean; // true if the message is from the user, false if from the assistant
 };
-const formatMessage = (content: string): string => {
-  console.log(content)
-  //First unescape backslashes
-  content.replace(/\\\\/g, "\\");
-  //Then replace newline characters with <br>
-  content.replace(/\n/g, "\n");
-  //Remove only the markers but keep the content between them
-  content = content.replace(/---START---\n?/g, "").replace(/\n?---END---/g, "");
-  //Trim extra white spaces
-  content = content.trim();
-  return content;
-};
+
 const MessageBubble = ({ content, isUser = false}: MessageBubbleProps) => {
   const { user } = useUser();
   return (
