@@ -151,7 +151,7 @@ export default function ChatInterface({
             case StreamMessageType.ToolStart:
               console.log('toolstart',message)
               // Handle start of tool execution (e.g. API calls, file operations)
-              if ("tool" in message) {
+              if (message.tool) {
                 setCurrentTool({
                   name: message.tool,
                   input: message.input,
@@ -168,7 +168,7 @@ export default function ChatInterface({
             case StreamMessageType.ToolEnd:
               // Handle completion of tool execution
               console.log('toolEnd',message)
-              if ("tool" in message && currentTool) {
+              if (message.tool && currentTool) {
                 // Replace the "Processing..." message with actual output
                 const lastTerminalIndex = fullResponse.lastIndexOf(
                   '<div class="bg-[#1e1e1e]'

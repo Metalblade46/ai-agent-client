@@ -27,12 +27,17 @@ const ChatRow = ({chat,onDelete}: {chat: Doc<"chats">, onDelete: (id: Id<"chats"
         const diffHours = Math.floor(diffTime/(1000*60*60))
         return diffHours<1 ? '<1 hour ago' : diffHours< 24 ? `${diffHours} hours ago`: `${Math.floor(diffHours/24)} day(s) ago`
     }
+    const removeHtml = (s:string)=>{
+        const last = s.lastIndexOf(">");
+        if(last ==-1) return s;
+        return s.substring(last+1)
+    }
 
   return (
     <div className={cn('group w-full border border-gray-200/30 mx-1 p-3 shadow-lg rounded-lg cursor-pointer',pathName.includes(chat._id)? 'bg-blue-600 text-white': 'bg-white hover:bg-blue-200/50 text-gray-600')} onClick={handleclick}>
         <div className='flex justify-between items-center text-sm'>
             {
-                lastMessage ? `${lastMessage.role=="user"? "You: ": "AI: "} ${formatMessage(lastMessage.content).substring(0,25)}...`: <span className="text-gray-400">New conversation</span>
+                lastMessage ? `${lastMessage.role=="user"? "You: ": "AI: "} ${removeHtml(formatMessage(lastMessage.content)).substring(0,25)}...`: <span className="text-gray-400">New conversation</span>
             }
         <TrashIcon className='text-transparent group-hover:text-red-400 hover:scale-150 transition-all ease-in duration-200 cursor-pointer' onClick={handleDelete}/>
         </div>
