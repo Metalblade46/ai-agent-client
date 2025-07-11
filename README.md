@@ -1,7 +1,7 @@
-# [Agentos]([https://agent.sabbyasachi.online](https://ai-agent-client-qxs2.vercel.app/)) AI Agent with Langgraph JS
-https://ai-agent-client-qxs2.vercel.app/
-This project is a Next.js application that serves as an AI agent utilizing Langchain and Langgraph JS. It integrates several functionalities including serving YouTube transcripts, Google Books data, Wikipedia data, and dummy customer orders and comments data.
+# [Agentos](https://ai-agent-client-qxs2.vercel.app) AI Agent with Langgraph JS
 
+This project is a Next.js application that serves as an AI agent utilizing Langchain and Langgraph JS. It integrates several functionalities including serving YouTube transcripts, Google Books data, Wikipedia data, and dummy customer orders and comments data.\
+Visit - https://ai-agent-client-qxs2.vercel.app/
 ## Features
 
 - 📹**YouTube Transcripts:** Fetch and serve transcripts from YouTube videos.
